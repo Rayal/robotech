@@ -1,0 +1,6 @@
+build/
+devel/
+install/
+*.swp
+*.swo
+.catkin_workspace
