@@ -4,3 +4,6 @@ install/
 *.swp
 *.swo
 .catkin_workspace
+.kdev4/
+*.kdev4
+

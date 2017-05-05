@@ -1,0 +1,4 @@
+<launch>
+  <node name="plan_interface" pkg="planning_tutorial" type="move_group_test"/>
+  
+</launch>
