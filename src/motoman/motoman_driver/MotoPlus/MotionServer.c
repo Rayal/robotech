@@ -82,10 +82,8 @@ STATUS Ros_MotionServer_DisableEcoMode(Controller* controller);
 void Ros_MotionServer_PrintError(USHORT err_no, char* msgPrefix);
 
 // IO functions:
-int Ros_MotionServer_ReadIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
-int Ros_MotionServer_WriteIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
-int Ros_MotionServer_ReadIOGroup(SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
-int Ros_MotionServer_WriteIOGroup(SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
+int Ros_MotionServer_ReadIO(SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
+int Ros_MotionServer_WriteIO( SimpleMsg* receiveMsg, SimpleMsg* replyMsg);
 
 
 //-----------------------
@@ -264,7 +262,7 @@ void Ros_MotionServer_WaitForSimpleMsg(Controller* controller, int connectionInd
 
 	while(!bDisconnect) //keep accepting messages until connection closes
 	{
-		Ros_Sleep(0);	//give it some time to breathe, if needed
+		mpTaskDelay(0);	//give it some time to breathe, if needed
 		
 		if (!bHasPreviousData)
 		{
@@ -311,17 +309,18 @@ void Ros_MotionServer_WaitForSimpleMsg(Controller* controller, int connectionInd
 				case ROS_MSG_MOTO_JOINT_FEEDBACK_EX:
 					expectedSize = minSize + sizeof(SmBodyJointFeedbackEx);
 					break;
-				case ROS_MSG_MOTO_READ_IO_BIT:
-					expectedSize = minSize + sizeof(SmBodyMotoReadIOBit);
+					
+				case ROS_MSG_MOTO_READ_SINGLE_IO:
+					expectedSize = minSize + sizeof(SmBodyMotoReadSingleIO);
 					break;
-				case ROS_MSG_MOTO_WRITE_IO_BIT:
-					expectedSize = minSize + sizeof(SmBodyMotoWriteIOBit);
+				case ROS_MSG_MOTO_READ_SINGLE_IO_REPLY:
+					expectedSize = minSize + sizeof(SmBodyMotoReadSingleIOReply);
 					break;
-				case ROS_MSG_MOTO_READ_IO_GROUP:
-					expectedSize = minSize + sizeof(SmBodyMotoReadIOGroup);
+				case ROS_MSG_MOTO_WRITE_SINGLE_IO:
+					expectedSize = minSize + sizeof(SmBodyMotoWriteSingleIO);
 					break;
-				case ROS_MSG_MOTO_WRITE_IO_GROUP:
-					expectedSize = minSize + sizeof(SmBodyMotoWriteIOGroup);
+				case ROS_MSG_MOTO_WRITE_SINGLE_IO_REPLY:
+					expectedSize = minSize + sizeof(SmBodyMotoWriteSingleIOReply);
 					break;
 				default:
 					bInvalidMsgType = TRUE;
@@ -366,7 +365,7 @@ void Ros_MotionServer_WaitForSimpleMsg(Controller* controller, int connectionInd
 			break;	// Close the connection
 	}
 	
-	Ros_Sleep(50);	// Just in case other associated task need time to clean-up.  Don't if necessary... but it doesn't hurt
+	mpTaskDelay(50);	// Just in case other associated task need time to clean-up.  Don't if necessary... but it doesn't hurt
 	
 	//close this connection
 	Ros_MotionServer_StopConnection(controller, connectionIndex);
@@ -396,8 +395,6 @@ int Ros_MotionServer_SimpleMsgProcess(Controller* controller, SimpleMsg* receive
 		else
 			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
 		break;
-
-	//-----------------------
 	case ROS_MSG_MOTO_MOTION_CTRL:
 		// Check that the appropriate message size was received
 		expectedBytes += sizeof(SmBodyMotoMotionCtrl);
@@ -406,8 +403,6 @@ int Ros_MotionServer_SimpleMsgProcess(Controller* controller, SimpleMsg* receive
 		else
 			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
 		break;
-
-	//-----------------------
 	case ROS_MSG_MOTO_JOINT_TRAJ_PT_FULL_EX:
 		// Check that the appropriate message size was received
 		if (byteSize >= (expectedBytes + sizeof(int))) //make sure I can at least get to [numberOfGroups] field
@@ -424,49 +419,24 @@ int Ros_MotionServer_SimpleMsgProcess(Controller* controller, SimpleMsg* receive
 			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
 		break;
 
-	//-----------------------
-	case ROS_MSG_MOTO_READ_IO_BIT:
+	case ROS_MSG_MOTO_READ_SINGLE_IO:
 		// Check that the appropriate message size was received
-		expectedBytes += sizeof(SmBodyMotoReadIOBit);
+		expectedBytes += sizeof(SmBodyMotoReadSingleIO);
 		if(expectedBytes == byteSize)
-			ret = Ros_MotionServer_ReadIOBit(receiveMsg, replyMsg);
+			ret = Ros_MotionServer_ReadIO(receiveMsg, replyMsg);
 		else
 			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
 		break;
-
-	//-----------------------
-	case ROS_MSG_MOTO_WRITE_IO_BIT:
+	case ROS_MSG_MOTO_WRITE_SINGLE_IO:
 		// Check that the appropriate message size was received
-		expectedBytes += sizeof(SmBodyMotoWriteIOBit);
+		expectedBytes += sizeof(SmBodyMotoWriteSingleIO);
 		if(expectedBytes == byteSize)
-			ret = Ros_MotionServer_WriteIOBit(receiveMsg, replyMsg);
+			ret = Ros_MotionServer_WriteIO(receiveMsg, replyMsg);
 		else
 			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
 		break;
 
 
-	//-----------------------
-	case ROS_MSG_MOTO_READ_IO_GROUP:
-		// Check that the appropriate message size was received
-		expectedBytes += sizeof(SmBodyMotoReadIOGroup);
-		if (expectedBytes == byteSize)
-			ret = Ros_MotionServer_ReadIOGroup(receiveMsg, replyMsg);
-		else
-			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
-		break;
-
-	//-----------------------
-	case ROS_MSG_MOTO_WRITE_IO_GROUP:
-		// Check that the appropriate message size was received
-		expectedBytes += sizeof(SmBodyMotoWriteIOGroup);
-		if (expectedBytes == byteSize)
-			ret = Ros_MotionServer_WriteIOGroup(receiveMsg, replyMsg);
-		else
-			invalidSubcode = ROS_RESULT_INVALID_MSGSIZE;
-		break;
-
-
-	//-----------------------
 	default:
 		printf("Invalid message type: %d\n", receiveMsg->header.msgType);
 		invalidSubcode = ROS_RESULT_INVALID_MSGTYPE;
@@ -483,7 +453,7 @@ int Ros_MotionServer_SimpleMsgProcess(Controller* controller, SimpleMsg* receive
 	return ret;
 }
 
-int Ros_MotionServer_ReadIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
+int Ros_MotionServer_ReadIO(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 {
 	int apiRet;
 	MP_IO_INFO ioReadInfo;
@@ -494,13 +464,13 @@ int Ros_MotionServer_ReadIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 	memset(replyMsg, 0x00, sizeof(SimpleMsg));
 	
 	// set prefix: length of message excluding the prefix
-	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoReadIOBitReply);
+	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoReadSingleIOReply);
 
 	// set header information of the reply
-	replyMsg->header.msgType = ROS_MSG_MOTO_READ_IO_BIT_REPLY;
+	replyMsg->header.msgType = ROS_MSG_MOTO_READ_SINGLE_IO_REPLY;
 	replyMsg->header.commType = ROS_COMM_SERVICE_REPLY;
 	
-	ioReadInfo.ulAddr = receiveMsg->body.readIOBit.ioAddress;
+	ioReadInfo.ulAddr = receiveMsg->body.readSingleIo.ioAddress;
 	apiRet = mpReadIO(&ioReadInfo, &ioValue, 1);
 
 	if (apiRet == OK)
@@ -508,55 +478,13 @@ int Ros_MotionServer_ReadIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 	else
 		resultCode = ROS_REPLY_FAILURE;
 
-	replyMsg->body.readIOBitReply.value = ioValue;
-	replyMsg->body.readIOBitReply.resultCode = resultCode;
+	replyMsg->body.readSingleIoReply.value = ioValue;
+	replyMsg->body.readSingleIoReply.resultCode = resultCode;
 	replyMsg->header.replyType = (SmReplyType)resultCode;
 	return OK;
 }
 
-int Ros_MotionServer_ReadIOGroup(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
-{
-	int apiRet;
-	MP_IO_INFO ioReadInfo[8];
-	USHORT ioValue[8];
-	int resultCode;
-	int resultValue = 0;
-	int i;
-
-	//initialize memory
-	memset(replyMsg, 0x00, sizeof(SimpleMsg));
-
-	// set prefix: length of message excluding the prefix
-	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoReadIOGroupReply);
-
-	// set header information of the reply
-	replyMsg->header.msgType = ROS_MSG_MOTO_READ_IO_GROUP_REPLY;
-	replyMsg->header.commType = ROS_COMM_SERVICE_REPLY;
-
-	for (i = 0; i < 8; i += 1)
-	{
-		ioReadInfo[i].ulAddr = (receiveMsg->body.readIOGroup.ioAddress * 10) + i;
-	}
-	apiRet = mpReadIO(ioReadInfo, ioValue, 8);
-
-	resultValue = 0;
-	for (i = 0; i < 8; i += 1)
-	{
-		resultValue |= (ioValue[i] << i);
-	}
-
-	if (apiRet == OK)
-		resultCode = ROS_REPLY_SUCCESS;
-	else
-		resultCode = ROS_REPLY_FAILURE;
-
-	replyMsg->body.readIOGroupReply.value = resultValue;
-	replyMsg->body.readIOGroupReply.resultCode = resultCode;
-	replyMsg->header.replyType = (SmReplyType)resultCode;
-	return OK;
-}
-
-int Ros_MotionServer_WriteIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
+int Ros_MotionServer_WriteIO(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 {	
 	int apiRet;
 	MP_IO_DATA ioWriteData;
@@ -566,14 +494,14 @@ int Ros_MotionServer_WriteIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 	memset(replyMsg, 0x00, sizeof(SimpleMsg));
 	
 	// set prefix: length of message excluding the prefix
-	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoWriteIOBitReply);
+	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoWriteSingleIOReply);
 
 	// set header information of the reply
-	replyMsg->header.msgType = ROS_MSG_MOTO_WRITE_IO_BIT_REPLY;
+	replyMsg->header.msgType = ROS_MSG_MOTO_WRITE_SINGLE_IO_REPLY;
 	replyMsg->header.commType = ROS_COMM_SERVICE_REPLY;
 	
-	ioWriteData.ulAddr = receiveMsg->body.writeIOBit.ioAddress;
-	ioWriteData.ulValue = receiveMsg->body.writeIOBit.ioValue;
+	ioWriteData.ulAddr = receiveMsg->body.writeSingleIo.ioAddress;
+	ioWriteData.ulValue = receiveMsg->body.writeSingleIo.ioValue;
 	apiRet = mpWriteIO(&ioWriteData, 1);
 
 	if (apiRet == OK)
@@ -581,41 +509,7 @@ int Ros_MotionServer_WriteIOBit(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
 	else
 		resultCode = ROS_REPLY_FAILURE;
 
-	replyMsg->body.writeIOBitReply.resultCode = resultCode;
-	replyMsg->header.replyType = (SmReplyType)resultCode;
-	return OK;
-}
-
-int Ros_MotionServer_WriteIOGroup(SimpleMsg* receiveMsg, SimpleMsg* replyMsg)
-{
-	int apiRet;
-	MP_IO_DATA ioWriteData[8];
-	int resultCode;
-	int i;
-
-	//initialize memory
-	memset(replyMsg, 0x00, sizeof(SimpleMsg));
-
-	// set prefix: length of message excluding the prefix
-	replyMsg->prefix.length = sizeof(SmHeader) + sizeof(SmBodyMotoWriteIOGroupReply);
-
-	// set header information of the reply
-	replyMsg->header.msgType = ROS_MSG_MOTO_WRITE_IO_GROUP_REPLY;
-	replyMsg->header.commType = ROS_COMM_SERVICE_REPLY;
-
-	for (i = 0; i < 8; i += 1)
-	{
-		ioWriteData[i].ulAddr = (receiveMsg->body.writeIOGroup.ioAddress * 10) + i;
-		ioWriteData[i].ulValue = (receiveMsg->body.writeIOGroup.ioValue & (1 << i)) >> i;
-	}
-	apiRet = mpWriteIO(ioWriteData, 8);
-
-	if (apiRet == OK)
-		resultCode = ROS_REPLY_SUCCESS;
-	else
-		resultCode = ROS_REPLY_FAILURE;
-
-	replyMsg->body.writeIOGroupReply.resultCode = resultCode;
+	replyMsg->body.writeSingleIoReply.resultCode = resultCode;
 	replyMsg->header.replyType = (SmReplyType)resultCode;
 	return OK;
 }
@@ -860,7 +754,7 @@ BOOL Ros_MotionServer_StopMotion(Controller* controller)
 		if(bStopped)
 			break;
 		else
-			Ros_Sleep(1);
+			mpTaskDelay(1);
 	}
 	
 	// Clear queues
@@ -882,10 +776,6 @@ BOOL Ros_MotionServer_ServoPower(Controller* controller, int servoOnOff)
 	MP_STD_RSP_DATA stdRespData;
 	int ret;
 	STATUS status;
-	
-#ifdef DUMMY_SERVO_MODE
-	return TRUE;
-#endif
 	
 	if (servoOnOff == OFF)
 		Ros_MotionServer_StopMotion(controller);
@@ -918,7 +808,7 @@ BOOL Ros_MotionServer_ServoPower(Controller* controller, int servoOnOff)
 			if(Ros_Controller_IsServoOn(controller) == servoOnOff)
 				break;
 			
-			Ros_Sleep(MOTION_START_CHECK_PERIOD);
+			mpTaskDelay(MOTION_START_CHECK_PERIOD);
 		}		
 	}
 	else
@@ -1021,13 +911,11 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	if(Ros_Controller_IsOperating(controller))
 		return FALSE;
 		
-#ifndef DUMMY_SERVO_MODE
 	// Check for condition that need operator manual intervention	
 	if(Ros_Controller_IsEStop(controller)
 		|| Ros_Controller_IsHold(controller)
 		|| !Ros_Controller_IsRemote(controller))
 		return FALSE;
-#endif
 		
 	// Check for condition that can be fixed remotely
 	if(Ros_Controller_IsError(controller))
@@ -1057,7 +945,7 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 				if(Ros_Controller_IsAlarm(controller) == FALSE)
 					continue;
 			
-				Ros_Sleep(MOTION_START_CHECK_PERIOD);
+				mpTaskDelay(MOTION_START_CHECK_PERIOD);
 			}
 			if(Ros_Controller_IsAlarm(controller))
 				goto updateStatus;
@@ -1067,7 +955,6 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 	}
 	
 
-#ifndef DUMMY_SERVO_MODE
 	// Servo On
 	if(Ros_Controller_IsServoOn(controller) == FALSE)
 	{
@@ -1095,7 +982,7 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 				if (Ros_Controller_IsServoOn(controller) == TRUE)
 					break;
 			
-				Ros_Sleep(MOTION_START_CHECK_PERIOD);
+				mpTaskDelay(MOTION_START_CHECK_PERIOD);
 			}
 			if(Ros_Controller_IsServoOn(controller) == FALSE)
 				goto updateStatus;			
@@ -1106,7 +993,6 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 			goto updateStatus;			
 		}
 	}
-#endif
 
 	// have to initialize the prevPulsePos that will be used when interpolating the traj
 	for(grpNo = 0; grpNo < MP_GRP_NUM; ++grpNo)
@@ -1138,7 +1024,7 @@ BOOL Ros_MotionServer_StartTrajMode(Controller* controller)
 		if(Ros_Controller_IsMotionReady(controller))
 			return(TRUE);
 			
-		Ros_Sleep(MOTION_START_CHECK_PERIOD);
+		mpTaskDelay(MOTION_START_CHECK_PERIOD);
 	}
 	
 updateStatus:	
@@ -1430,7 +1316,7 @@ void Ros_MotionServer_AddToIncQueueProcess(Controller* controller, int groupNo)
 			ctrlGroup->hasDataToProcess = FALSE;
 		}
 		
-		Ros_Sleep(interpolPeriod);
+		mpTaskDelay(interpolPeriod);
 	}		
 }
 
@@ -1589,7 +1475,7 @@ BOOL Ros_MotionServer_AddPulseIncPointToQ(Controller* controller, int groupNo, I
 	while( q->cnt >= Q_SIZE ) //queue is full
 	{
 		//wait for items to be removed from the queue
-		Ros_Sleep(controller->interpolPeriod);
+		mpTaskDelay(controller->interpolPeriod);
 		
 		//make sure we don't get stuck in infinite loop
 		if (!Ros_Controller_IsMotionReady(controller)) //<- they probably pressed HOLD or ESTOP
@@ -1723,9 +1609,9 @@ BOOL Ros_MotionServer_HasDataInQueue(Controller* controller)
 //-------------------------------------------------------------------
 void Ros_MotionServer_IncMoveLoopStart(Controller* controller) //<-- IP_CLK priority task
 {
-#if DX100
+#ifdef DX100
 	MP_POS_DATA moveData;
-#else
+#elif (FS100 || DX200)
 	MP_EXPOS_DATA moveData;
 #endif
 
@@ -1832,7 +1718,7 @@ void Ros_MotionServer_IncMoveLoopStart(Controller* controller) //<-- IP_CLK prio
 				}
 			}	
 
-#if DX100
+#ifdef DX100
 			// first robot
 			moveData.ctrl_grp = 1;
 			ret = mpMeiIncrementMove(MP_SL_ID1, &moveData);
@@ -1856,7 +1742,7 @@ void Ros_MotionServer_IncMoveLoopStart(Controller* controller) //<-- IP_CLK prio
 						printf("mpMeiIncrementMove returned: %d\r\n", ret);
 				}
 			}			
-#else
+#elif (FS100 || DX200)
 			ret = mpExRcsIncrementMove(&moveData);
 			if(ret != 0)
 			{
@@ -1917,10 +1803,6 @@ STATUS Ros_MotionServer_DisableEcoMode(Controller* controller)
 	MP_STD_RSP_DATA rData;
 	int ret;
 
-#ifdef DUMMY_SERVO_MODE
-	return OK;
-#endif
-
 	if (Ros_Controller_IsEcoMode(controller) == TRUE)
 	{
 		//toggle servos to disable energy-savings mode
@@ -1940,7 +1822,7 @@ STATUS Ros_MotionServer_DisableEcoMode(Controller* controller)
 				if (Ros_Controller_IsEcoMode(controller) == FALSE)
 					break;
 
-				Ros_Sleep(MOTION_START_CHECK_PERIOD);
+				mpTaskDelay(MOTION_START_CHECK_PERIOD);
 			}
 		}
 		else

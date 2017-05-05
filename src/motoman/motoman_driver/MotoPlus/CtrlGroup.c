@@ -267,11 +267,7 @@ BOOL Ros_CtrlGroup_GetFBPulsePos(CtrlGroup* ctrlGroup, long pulsePos[MAX_PULSE_A
 {
 	LONG status = 0;
 	MP_CTRL_GRP_SEND_DATA sData;
-#ifndef DUMMY_SERVO_MODE
 	MP_FB_PULSE_POS_RSP_DATA pulse_data;
-#else
-	MP_PULSE_POS_RSP_DATA pulse_data;
-#endif
 	int i;
 
 	memset(pulsePos, 0, MAX_PULSE_AXES*sizeof(long));  // clear result, in case of error
@@ -295,7 +291,6 @@ BOOL Ros_CtrlGroup_GetFBPulsePos(CtrlGroup* ctrlGroup, long pulsePos[MAX_PULSE_A
 			return FALSE;
 	}
 	
-#ifndef DUMMY_SERVO_MODE
 	// get raw (uncorrected/unscaled) joint positions
 	status = mpGetFBPulsePos (&sData,&pulse_data);
 	if (0 != status)
@@ -318,9 +313,6 @@ BOOL Ros_CtrlGroup_GetFBPulsePos(CtrlGroup* ctrlGroup, long pulsePos[MAX_PULSE_A
 			pulse_data.lPos[dest_axis] -= (int)(pulse_data.lPos[src_axis] * corr->fCorrectionRatio);
 		}
 	}
-#else
-	mpGetPulsePos(&sData, &pulse_data);
-#endif
 	
 	// assign return value
 	for (i=0; i<MAX_PULSE_AXES; ++i)

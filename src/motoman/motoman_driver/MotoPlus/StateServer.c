@@ -150,7 +150,7 @@ void Ros_StateServer_SendState(Controller* controller)
 		{
 			Ros_StateServer_SendMsgToAllClient(controller, &sendMsg, msgSize);
 		}
-		Ros_Sleep(STATE_UPDATE_MIN_PERIOD);
+		mpTaskDelay(STATE_UPDATE_MIN_PERIOD);
 	}
 	
 	// Terminate this task

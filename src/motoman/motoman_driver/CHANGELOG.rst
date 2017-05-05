@@ -2,6 +2,37 @@
 Changelog for package motoman_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.3.7 (2017-03-21)
+------------------
+* Add dep on std_srvs. Fix `#159 <https://github.com/ros-industrial/motoman/issues/159>`_.
+* Contributors: Shaun Edwards, gavanderhoorn
+
+0.3.6 (2017-03-20)
+------------------
+* v1.3.7 MotoROS Driver
+  Based on updates from Rosen Diankov (Mujin):
+  > Detection of "energy savings" mode.
+  > Fix support for R3 and R4 robots.
+  > Add function to read torque values. (Not implemented in messaging
+  yet.)
+  > Improve detection of robot's starting position.
+  > Allow for multiple packets to be received in single Recv command.
+  > Add command for servo power.
+  > Add command to clear alarms/errors.
+* driver: fix whitespace inconsistencies in launch files. (`#120 <https://github.com/ros-industrial/motoman/issues/120>`_)
+* driver: update err msg displayed when 'port' param is not found. (`#119 <https://github.com/ros-industrial/motoman/issues/119>`_)
+  IP doesn't have any 'ports', only TCP has those.
+* v1.3.5 MotoROS Driver (`#114 <https://github.com/ros-industrial/motoman/issues/114>`_)
+  * v1.3.5 MotoROS Driver
+  Update prevents error that would occur if the user's robot controller
+  has more control-groups than what is supported by MotoROS and ROS-I.
+* v1.3.6 MotoROS Driver
+  Force user to acknowledge that extra control groups are being ignored.
+* v1.3.5 MotoROS Driver
+  Update prevents error that would occur if the user's robot controller
+  has more control-groups than what is supported by MotoROS and ROS-I.
+* Contributors: G.A. vd. Hoorn, Patrick Beeson, Shaun Edwards, Ted Miller, gavanderhoorn
+
 0.3.5 (2016-07-03)
 ------------------
 * Cleaned up issues with Changelogs

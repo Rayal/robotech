@@ -35,3 +35,7 @@ include_directories(
 add_executable(group_interface src/plan_interface.cpp)
 target_link_libraries(group_interface ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(group_interface ${catkin_EXPORTED_TARGETS})
+
+add_executable(sia_motion src/motoman_motion.cpp)
+target_link_libraries(sia_motion ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(sia_motion ${catkin_EXPORTED_TARGETS})
