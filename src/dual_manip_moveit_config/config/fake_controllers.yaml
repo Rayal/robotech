@@ -1,0 +1,35 @@
+controller_list:
+  - name: fake_left_manipulator_controller
+    joints:
+      - left_sia_joint_s
+      - left_sia_joint_l
+      - left_sia_joint_e
+      - left_sia_joint_u
+      - left_sia_joint_r
+      - left_sia_joint_b
+      - left_sia_joint_t
+  - name: fake_right_manipulator_controller
+    joints:
+      - right_sia_joint_s
+      - right_sia_joint_l
+      - right_sia_joint_e
+      - right_sia_joint_u
+      - right_sia_joint_r
+      - right_sia_joint_b
+      - right_sia_joint_t
+  - name: fake_dual_manipulator_controller
+    joints:
+      - left_sia_joint_s
+      - left_sia_joint_l
+      - left_sia_joint_e
+      - left_sia_joint_u
+      - left_sia_joint_r
+      - left_sia_joint_b
+      - left_sia_joint_t
+      - right_sia_joint_s
+      - right_sia_joint_l
+      - right_sia_joint_e
+      - right_sia_joint_u
+      - right_sia_joint_r
+      - right_sia_joint_b
+      - right_sia_joint_t

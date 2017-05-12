@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_support">
+  <xacro:property name="base_length" value="1"/>
+  <xacro:property name="base_height" value="0.3"/>
+  <xacro:property name="base_depth" value="0.5"/>
+
+  <xacro:include filename="$(find motoman_sia5d_support)/urdf/sia5d_macro.xacro"/>
+  <xacro:motoman_sia5d prefix="left_sia_"/>
+  <xacro:motoman_sia5d prefix="right_sia_"/>
+  
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_depth} ${base_height}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_depth} ${base_height}"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="base_to_left_sia" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_sia_base_link"/>
+    <origin xyz="0.3 0 ${base_height/2}" rpy="0 0 1.57075"/>
+  </joint>
+  <joint name="base_to_right_sia" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_sia_base_link"/>
+    <origin xyz="-0.3 0 ${base_height/2}" rpy="0 0 1.57075"/>
+  </joint>
+
+</robot>
+
