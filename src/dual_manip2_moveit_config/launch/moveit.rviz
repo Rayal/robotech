@@ -69,102 +69,102 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_base:
+          sia_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          left_sia_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_sia_link_b:
+          sia_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_e:
+          sia_link_b:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_l:
+          sia_link_e:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_r:
+          sia_link_l:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_s:
+          sia_link_r:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_t:
+          sia_link_s:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_u:
+          sia_link_t:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_sia_base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_sia_base_link:
+          sia_link_u:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_b:
+          sia_tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_e:
+          ur5_ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_l:
+          ur5_forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_r:
+          ur5_shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_s:
+          ur5_tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_upper_arm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_t:
+          ur5_wrist_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_u:
+          ur5_wrist_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_tool0:
+          ur5_wrist_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
         Loop Animation: false
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -186,7 +186,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
-        Planning Group: dual_manipulator
+        Planning Group: dual_manip
         Query Goal State: true
         Query Start State: false
         Show Workspace: false
@@ -214,102 +214,102 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_base:
+          sia_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-          left_sia_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          left_sia_link_b:
+          sia_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_e:
+          sia_link_b:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_l:
+          sia_link_e:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_r:
+          sia_link_l:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_s:
+          sia_link_r:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_t:
+          sia_link_s:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_link_u:
+          sia_link_t:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          left_sia_tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_sia_base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          right_sia_base_link:
+          sia_link_u:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_b:
+          sia_tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_e:
+          ur5_ee_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_l:
+          ur5_forearm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_r:
+          ur5_shoulder_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_s:
+          ur5_tool0:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+          ur5_upper_arm_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_t:
+          ur5_wrist_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_link_u:
+          ur5_wrist_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          right_sia_tool0:
+          ur5_wrist_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -329,7 +329,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.69431
+      Distance: 2.9965
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -341,10 +341,10 @@ Visualization Manager:
         Z: 2.23518e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.599797
+      Pitch: 0.254797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 1.65177
+      Yaw: 1.80677
     Saved: ~
 Window Geometry:
   Displays:
