@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Creates publisher that advertises Key messages on rostopic /keyboard
-  ros::Publisher pub_keyboard = nh.advertise<keyboard_reader::Key>("keyboard", 100);
+  ros::Publisher pub_keyboard = nh.advertise<keyboard_reader::Key>("keyboard", 1000);
   
   // Message for publishing key press events
   keyboard_reader::Key key_event;
